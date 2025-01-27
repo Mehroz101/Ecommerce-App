@@ -2,9 +2,26 @@ import React from "react";
 import "../styles/Auth.css";
 import CustomTextInput from "../components/FormComponents/CustomTextInput";
 import { useForm } from "react-hook-form";
+import { login } from "../services/Api";
+import { useMutation } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
+import { notify } from "../utils/notification";
 const Login = () => {
   const method = useForm();
-  const onsubmit = (data) => console.log(data);
+  const navigate = useNavigate()
+  const loginMutation = useMutation({
+    mutationFn: login,
+    onSuccess: (data) => {
+      if (data.success) {
+        notify("success", data.message);
+        navigate("/")
+        localStorage.setItem("ecomtoken",data.token)
+      }
+    },
+  });
+  const onsubmit = (data) =>{
+    loginMutation.mutate(data)
+  };
   return (
     <div>
       <div class="container">

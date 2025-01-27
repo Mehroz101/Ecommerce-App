@@ -1,73 +1,63 @@
-const User = require("../models/User"); // Use require for imports
-const jwt = require("jsonwebtoken"); // Example of another require
-const signup = async (req, res) => {
+const User = require("../models/User");
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs");
+
+
+exports.signup = async (req, res) => {
   try {
-    console.log(req.body);
-    const { username, password, confirmPassword } = req.body;
-    if (password === confirmPassword) {
-      const isUserExits = await User.findOne({ username });
-      if (isUserExits) {
-        return res.status(400).send({
-          success: false,
-          message: "User already exists",
-        });
-      } else {
-        const user = new User({
-          username,
-          password,
-          role: "STD",
-        });
-        await user.save();
-        res.status(201).send({
-          success: true,
-          message: "User successfully signed up",
-        });
-      }
+    const { username, email, password } = req.body;
+    const isUsernameExist = await User.find({ username });
+    const isUserEmailExist = await User.find({ email });
+    console.log(isUsernameExist.length, isUserEmailExist);
+    if (isUsernameExist.length == 0 && isUserEmailExist.length == 0) {
+      const user = new User({ username, email, password });
+      await user.save();
+      res
+        .status(201)
+        .json({ success: true, message: "User created successfully" });
     } else {
-      res.status(400).send({
-        success: false,
-        message: "Password does not match",
-      });
+      res
+        .status(400)
+        .json({ success: false, message: "Username or email already exist" });
     }
-  } catch (error) {
-    res.status(500).send({
-      success: false,
-      message: error.message,
-    });
+  } catch (err) {
+    res.status(400).json({ success: false, error: err.message });
   }
 };
 
-const login = async (req, res) => {
-  try {
-    const { username, password, isAdmin = false } = req.body;
-    const user = await User.findOne({ username, isAdmin: isAdmin });
-    if (user) {
-      if (user.password === password) {
-        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET_KEY);
 
-        res.status(200).send({
-          success: true,
-          message: "User successfully logged in",
-          token,
-          role: user.isAdmin,
-        });
-      } else {
-        res.status(400).send({
-          success: false,
-          message: "Invalid password",
-        });
-      }
-    } else {
-      res.status(400).send({
-        success: false,
-        message: "User does not exist",
-      });
+exports.login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const user = await User.findOne({ email });
+    console.log("User found:", user); 
+
+    if (!user) {
+      return res
+        .status(401)
+        .json({ success: false, message: "Invalid credentials" });
     }
-  } catch (error) {
-    res.status(500).send({
-      success: false,
-      message: error.message,
+
+    console.log("Plaintext password from request:", password); 
+    console.log("Hashed password from database:", user.password); 
+
+    const isPasswordValid = await bcrypt.compare(
+      password.trim(),
+      user.password
+    ); 
+    console.log("Password comparison result:", isPasswordValid); 
+
+    if (!isPasswordValid) {
+      return res
+        .status(401)
+        .json({ success: false, message: "Invalid credentials" });
+    }
+
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "1h",
     });
+    res.json({ success: true, message: "Login successful", token: token });
+  } catch (err) {
+    res.status(400).json({ success: false, message: err.message });
   }
 };
-module.exports = { signup, login };

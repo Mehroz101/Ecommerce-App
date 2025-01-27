@@ -30,31 +30,22 @@ const CustomSidebar = ({ visible, onHide }) => {
               className="sidebar-link"
               onClick={handleLinkClick}
             >
-              <i className="pi pi-home"></i> Dashboard
+              <i className="pi pi-home"></i> Home
             </Link>
           </li>
           <li>
             <Link
-              to={ROUTES.USERS}
+              to={ROUTES.CART}
               className="sidebar-link"
               onClick={handleLinkClick}
             >
-              <i className="pi pi-users"></i> Users
+              <i className="pi pi-users"></i> Cart
             </Link>
           </li>
 
-          <li>
-            <Link
-              to={ROUTES.SETTING}
-              className="sidebar-link "
-              onClick={handleLinkClick}
-            >
-              <i className="pi pi-cog"></i>
-              Settings
-            </Link>
-          </li>
-          <li className=" py-2 px-4 rext-black" onClick={() => handleLogout()}>
-            <i className="pi pi-sign-out pr-2"></i>
+          
+          <li className=" py-2 sidebar-link" onClick={() => handleLogout()}>
+            <i className="pi pi-sign-out"></i>
             Logout
           </li>
         </ul>

@@ -1,11 +1,11 @@
 import "./App.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import {
+  Cart,
   Home,
   Layout,
   Login,
   ProtectedRoute,
-  Setting,
   Signup,
   Users,
 } from "./utils/LazyLoadComponent";
@@ -64,8 +64,7 @@ function AppRoutes() {
       <Route path={ROUTES.SIGNUP} element={<Signup />} />
       <Route path="/" element={<ProtectedRoute element={<Layout />} />}>
         <Route index element={<Home />} />
-        <Route path={ROUTES.USERS} element={<Users />} />
-        <Route path={ROUTES.SETTING} element={<Setting />} />
+        <Route path={ROUTES.CART} element={<Cart />} />
       </Route>
     </Routes>
   );

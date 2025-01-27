@@ -30,6 +30,7 @@ const CustomTextInput = ({
               {label}
               {required && <span className="text-red-700 fw-bold ">*</span>}
             </label>
+            <br />
             <InputText
               {...field}
               onChange={(e) => {
@@ -43,7 +44,7 @@ const CustomTextInput = ({
               placeholder={placeholder}
               autoFocus={autoFocus}
               disabled={!isEnable}
-              className={`custom-input ${error ? "input-error" : ""}`}
+              className={`custom-input w-full ${error ? "input-error" : ""}`}
             />
 
             {showErrorMessage && error && (

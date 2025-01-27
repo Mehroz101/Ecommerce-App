@@ -2,6 +2,7 @@
 .custom-text-input-container {
     margin-bottom: 1rem;
     width: 100%;
+
   }
   
   /* Styling for the label */
@@ -18,7 +19,7 @@
 
   /* Styling for the input field */
   .custom-input {
-    width: 100%;
+    width: 100% !important;
     padding: 0.8rem;
     font-size: 1rem;
     outline: none;

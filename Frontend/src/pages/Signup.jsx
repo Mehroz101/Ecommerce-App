@@ -2,10 +2,24 @@ import React from "react";
 import "../styles/Auth.css";
 import CustomTextInput from "../components/FormComponents/CustomTextInput";
 import { useForm } from "react-hook-form";
+import { useMutation } from "@tanstack/react-query";
+import { signup } from "../services/Api";
+import { notify } from "../utils/notification";
 
 const Signup = () => {
   const method = useForm();
-  const onsubmit = (data) => console.log(data);
+  const signupMutation = useMutation({
+    mutationFn: signup,
+    onSuccess: (data) => {
+      console.log(data);
+      if (data.success) {
+        notify("success", data.message);
+      }
+    },
+  });
+  const onsubmit = (data) => {
+    signupMutation.mutate(data);
+  };
   return (
     <div>
       <div class="container">
@@ -15,13 +29,21 @@ const Signup = () => {
               <div class="auth__field">
                 <i class="auth__icon fas fa-user"></i>
                 <CustomTextInput
-                  name="email"
-                  label="Email"
-                  placeHolder="Enter your email"
+                  name="username"
+                  label="User Name"
+                  placeHolder="Enter your username"
                   control={method.control}
-                  rules={{ required: "Email is required" }}
+                  rules={{ required: "Username is required" }}
                 />
               </div>
+              <CustomTextInput
+                name="email"
+                label="Email"
+                type="email"
+                placeHolder="Enter your email"
+                control={method.control}
+                rules={{ required: "Email is required" }}
+              />
               <div class="auth__field">
                 <i class="auth__icon fas fa-lock"></i>
                 <CustomTextInput
@@ -29,14 +51,6 @@ const Signup = () => {
                   label="Password"
                   type="password"
                   placeHolder="Enter your password"
-                  control={method.control}
-                  rules={{ required: "Password is required" }}
-                />
-                <CustomTextInput
-                  name="cpassword"
-                  label="Confirm Password"
-                  type="password"
-                  placeHolder="Confirm your password"
                   control={method.control}
                   rules={{ required: "Password is required" }}
                 />
